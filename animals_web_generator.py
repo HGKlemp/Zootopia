@@ -1,35 +1,38 @@
 import json
-def load_data(file_path):
-  """ Loads a JSON file """
-  with open(file_path, "r") as handle:
-    return json.load(handle)
 
 
-animals_data = load_data('animals_data.json')
+with open("animals_data.json", "r") as handle:
+    animals_data = json.load(handle)
 
-print(animals_data)
 
-def get_animals(animals_data):
-  """ Returns a list of animals """
+with open("animals_template.html", "r") as handle:
+    html_template = handle.read()
+
+animals_text = ""
 
 for animal in animals_data:
-    name = animal['name']
-    diet = animal['characteristics']['diet']
-    location = animal['locations'][0]
-    animal_type = animal.get('characteristics', {}).get('type', None)
-    print(f"Name: {name}")
-    print(f"Diet: {diet}")
-    print(f"Location: {location}")
-    if  animal_type:
-        print(f"Type: {animal_type}")
-    print()
 
-    # print(f"Name: {name}")
-    # print(f"Diet: {diet}")
-    # print(f"Location{location}")
-    # print(f"Type: {type}")
+    name = animal.get("name", "Unknown")
+    diet = animal.get("characteristics", {}).get("diet", "Unknown")
+
+    locations = animal.get("locations", [])
+    location = locations[0] if locations else "Unknown"
+
+    animal_type = animal.get("characteristics", {}).get("type", "")
 
 
+    animals_text += f"Name: {name} "
+    animals_text += f"Diet: {diet} "
+    animals_text += f"Location: {location}"
 
-animals_data = load_data('animals_data.json')
-get_animals(animals_data)
+    if animal_type:
+        animals_text += f" Type: {animal_type}"
+
+    animals_text += "\n"
+
+
+new_html = html_template.replace("__REPLACE_ANIMALS_INFO__", animals_text)
+
+
+with open("animals.html", "w") as handle:
+    handle.write(new_html)
