@@ -1,47 +1,42 @@
 import json
 
 
-with open("animals_data.json", "r") as handle:
-    animals_data = json.load(handle)
+def serialize_animal(animal_data):
+    output = ""
+    output += "<li class=\"cards__item\">\n"
+    output += f"  <div class=\"card__title\">{animal_data['name']}</div>\n"
+    output += "  <p class=\"card__text\">\n"
+    output += f"    <strong>Diet:</strong> {animal_data['characteristics']['diet']}<br/>\n"
+
+    locations = animal_data.get("locations", [])
+    location = " and ".join(locations) if locations else "Unknown"
+    output += f"    <strong>Location:</strong> {location}<br/>\n"
+
+    animal_type = animal_data.get("characteristics", {}).get("type")
+    if animal_type:
+        output += f"    <strong>Type:</strong> {animal_type}<br/>\n"
+
+    output += "  </p>\n"
+    output += "</li>\n"
+
+    return output
 
 
-with open("animals_template.html", "r") as handle:
+with open("animals_data.json", "r", encoding="utf-8") as handle:
+    data = json.load(handle)
+
+with open("animals_template.html", "r", encoding="utf-8") as handle:
     html_template = handle.read()
 
 
 animals_html = ""
 
-
-for animal in animals_data:
-
-    name = animal.get("name", "Unknown")
-    diet = animal.get("characteristics", {}).get("diet", "Unknown")
-
-    locations = animal.get("locations", [])
-    location = locations[0] if locations else "Unknown"
-
-    animal_type = animal.get("characteristics", {}).get("type")
-
-    animals_html += "<li class='cards__item'>\n"
-
-    animals_html += f"  <h2 class='card__title'>{name}</h2>\n"
-    animals_html += "  <div class='card__text'>\n"
-
-    animals_html += f"    <p><strong>Diet:</strong> {diet}</p>\n"
-    animals_html += f"    <p><strong>Location:</strong> {location}</p>\n"
-
-    if animal_type:
-        animals_html += f"    <p><strong>Type:</strong> {animal_type}</p>\n"
-
-    animals_html += "  </div>\n"
-    animals_html += "</li>\n"
+for animal_data in data:
+    animals_html += serialize_animal(animal_data)
 
 
 new_html = html_template.replace(
-    "__REPLACE_ANIMALS_INFO__",
-    animals_html
-)
+    "__REPLACE_ANIMALS_INFO__", animals_html)
 
-
-with open("animals.html", "w") as handle:
+with open("animals.html", "w", encoding="utf-8") as handle:
     handle.write(new_html)
