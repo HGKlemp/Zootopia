@@ -1,6 +1,5 @@
 import data_fetcher
 
-
 def serialize_animal(animal_data):
     """Create HTML for one animal."""
 
@@ -29,8 +28,17 @@ def serialize_animal(animal_data):
 def load_template():
     """Load HTML template."""
 
-    with open("animals_template.html", "r", encoding="utf-8") as handle:
-        return handle.read()
+    try:
+        with open("animals_template.html", "r", encoding="utf-8") as handle:
+            return handle.read()
+
+    except FileNotFoundError:
+        print("Error: The file 'animals_template.html' was not found.")
+        return None
+
+    except OSError as e:
+        print(f"Error reading the template file: {e}")
+        return None
 
 
 def write_html(html):
@@ -72,3 +80,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

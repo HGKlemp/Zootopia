@@ -7,6 +7,7 @@ load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
 
+
 def fetch_data(animal_name):
     """
     Fetches the animals data for the animal 'animal_name'.
@@ -35,11 +36,16 @@ def fetch_data(animal_name):
         "name": animal_name
     }
 
-    response = requests.get(url, headers=headers, params=params)
+    try:
+        response = requests.get(url, headers=headers, params=params)
 
-    # Successful request
-    if response.status_code == 200:
-        data = response.json()
-        return data
+        # Successful request
+        if response.status_code == 200:
+            data = response.json()
+            return data
 
-    return []
+        return []
+
+    except requests.RequestException as e:
+        print(f"Request failed: {e}")
+        return []
